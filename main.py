@@ -2,6 +2,13 @@ import requests
 import json
 import streamlit
 
+# Using Streamlit for a better user interface 
+streamlit.title("Real State Search engin")
+user_input = streamlit.text_input("キーワードを入力してください。")
+
+# API GatewayエンドポイントURL
+api_gateway_url = "https://11l79ngo06.execute-api.ap-northeast-1.amazonaws.com/dev/"
+
 def invoke_lambda(api_gateway_url, payload):
     headers = {'Content-Type': 'application/json'}
     try:
@@ -15,13 +22,6 @@ def invoke_lambda(api_gateway_url, payload):
     except json.JSONDecodeError as e:
         print(f"Error decoding JSON response: {e}")
         return None
-
-# API GatewayエンドポイントURL
-api_gateway_url = "https://11l79ngo06.execute-api.ap-northeast-1.amazonaws.com/dev/"
-
-# Using Streamlit for a better user interface 
-streamlit.title("Lambda Function Invoker")
-user_input = streamlit.text_input("キーワードを入力してください。")
 
 # Only proceed if user input is provided (for both Streamlit and standard input)
 if user_input: # Check if user_input is not empty
