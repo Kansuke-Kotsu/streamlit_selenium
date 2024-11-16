@@ -3,7 +3,7 @@ import json
 import streamlit
 
 # Using Streamlit for a better user interface 
-streamlit.title("Real State Search engin")
+streamlit.title("Search real states")
 user_input = streamlit.text_input("キーワードを入力してください。")
 
 # API GatewayエンドポイントURL
