@@ -40,16 +40,17 @@ if user_input: # Check if user_input is not empty
             name_2 = result["name2"]
             name_3 = result["name3"]
             print(f"Lambda function response: {name_1}, {name_2}, {name_3}")
-            streamlit.write(f"以下の物件が見つかりました！") #For Streamlit
-            streamlit.write(f"{name_1}") #For Streamlit
-            streamlit.write(f"{name_2}") #For Streamlit
-            streamlit.write(f"{name_3}") #For Streamlit
+            streamlit.write(f"< 検索結果 >") #For Streamlit
+            streamlit.write(f"--------- 東急 ---------  ") 
+            streamlit.write(f"{name_1}") 
+            streamlit.write(f"{name_2}") 
+            streamlit.write(f"{name_3}") 
         except KeyError as e:
             print(f"Error: Key not found in Lambda response: {e}")
-            streamlit.error(f"Error: Key not found in Lambda response: {e}") #For Streamlit
+            streamlit.error(f"Error: Key not found in Lambda response: {e}") 
     else:
         print("Lambda function invocation failed.")
-        streamlit.error("Lambda function invocation failed.") #For Streamlit
+        streamlit.error("Lambda function invocation failed.") 
 else:
     print("Please enter a keyword.")
-    streamlit.warning("Please enter a keyword.") #For Streamlit
+    streamlit.warning("Please enter a keyword.") 
