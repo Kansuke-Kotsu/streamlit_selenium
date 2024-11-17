@@ -4,53 +4,60 @@ import streamlit
 
 # Using Streamlit for a better user interface 
 streamlit.title("Search property")
-user_input = streamlit.text_input("キーワードを入力してください。")
+input_1 = streamlit.text_input("物件名・キーワードを入力してください。")
+options = [
+    "北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県",
+    "茨城県", "栃木県", "群馬県", "埼玉県", "千葉県", "東京都", "神奈川県",
+    "新潟県", "富山県", "石川県", "福井県", "山梨県", "長野県", "岐阜県",
+    "静岡県", "愛知県", "三重県", "滋賀県", "京都府", "大阪府", "兵庫県",
+    "奈良県", "和歌山県", "鳥取県", "島根県", "岡山県", "広島県", "山口県",
+    "徳島県", "香川県", "愛媛県", "高知県", "福岡県", "佐賀県", "長崎県",
+    "熊本県", "大分県", "宮崎県", "鹿児島県", "沖縄県"
+]
+input_2 = streamlit.selectbox("都道府県名を選択してください。", options)
 
-# API GatewayエンドポイントURL
-api_gateway_url = "https://11l79ngo06.execute-api.ap-northeast-1.amazonaws.com/dev/"
-
-def invoke_lambda(api_gateway_url, payload):
+def invoke_lambda(api_gateway_url, payload, site_name):
     headers = {'Content-Type': 'application/json'}
-    try:
-        response = requests.post(url=api_gateway_url, json=payload, headers=headers)
-        print(f"Raw response: {response.text}")
-        response.raise_for_status()  # Raise HTTPError for bad responses (4xx or 5xx)
-        return response.json()
-    except requests.exceptions.RequestException as e:
-        print(f"Error invoking Lambda function: {e}")
-        return None
-    except json.JSONDecodeError as e:
-        print(f"Error decoding JSON response: {e}")
-        return None
+    response = requests.post(url=api_gateway_url, json=payload, headers=headers)
+    print(f"Raw response: {response.text}")
+    response.raise_for_status()  # Raise HTTPError for bad responses (4xx or 5xx)
+    result = response.json()
+    name_1 = result["name1"]
+    name_2 = result["name2"]
+    name_3 = result["name3"]
+    print(f"Lambda function response: {name_1}, {name_2}, {name_3}")
+    streamlit.write(f"--------- {site_name} ---------  ") 
+    streamlit.write(f"{name_1}") 
+    streamlit.write(f"{name_2}") 
+    streamlit.write(f"{name_3}") 
+    streamlit.write(f"") 
+
 
 # Only proceed if user input is provided (for both Streamlit and standard input)
-if user_input: # Check if user_input is not empty
+if streamlit.button("検索"): # 検索ボタンを追加
     # リクエストペイロード (必要に応じて)
     payload = {
-        "key1": user_input,
-        "key2": "value2",
+        "key1": input_1,
+        "key2": input_2,
     }
     # Lambda関数呼び出し
-    result = invoke_lambda(api_gateway_url, payload)
-    print("")
+    streamlit.write(f"< 検索結果 >") #For Streamlit
+    result = invoke_lambda(
+        api_gateway_url = "https://11l79ngo06.execute-api.ap-northeast-1.amazonaws.com/dev/docker-selenium-tokyu", 
+        payload=payload,
+        site_name="東急"
+        )
+    
+    result = invoke_lambda(
+        api_gateway_url = "https://11l79ngo06.execute-api.ap-northeast-1.amazonaws.com/dev/docker-selenium-able", 
+        payload=payload,
+        site_name="エイブル"
+        )
+    
+    result = invoke_lambda(
+        api_gateway_url = "https://11l79ngo06.execute-api.ap-northeast-1.amazonaws.com/dev/docker-selenium-takuto", 
+        payload=payload,
+        site_name="宅都"
+        )
 
-    if result:
-        try:
-            name_1 = result["name1"]
-            name_2 = result["name2"]
-            name_3 = result["name3"]
-            print(f"Lambda function response: {name_1}, {name_2}, {name_3}")
-            streamlit.write(f"< 検索結果 >") #For Streamlit
-            streamlit.write(f"--------- 東急 ---------  ") 
-            streamlit.write(f"{name_1}") 
-            streamlit.write(f"{name_2}") 
-            streamlit.write(f"{name_3}") 
-        except KeyError as e:
-            print(f"Error: Key not found in Lambda response: {e}")
-            streamlit.error(f"Error: Key not found in Lambda response: {e}") 
-    else:
-        print("Lambda function invocation failed.")
-        streamlit.error("Lambda function invocation failed.") 
-else:
-    print("Please enter a keyword.")
-    streamlit.warning("Please enter a keyword.") 
+    
