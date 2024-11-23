@@ -67,6 +67,6 @@ if password == st.secrets["password"]:
             )
 
 else:
-    st.error("アクセスが拒否されました。")
+    st.error("パスワードを入力してください。")
 # --- End Authentication ---
 
