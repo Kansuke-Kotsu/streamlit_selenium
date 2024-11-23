@@ -1,10 +1,21 @@
 import requests
 import json
-import streamlit
+import streamlit as st
+import streamlit_authenticator as sa
 
 # Using Streamlit for a better user interface 
-streamlit.title("Search property")
-input_1 = streamlit.text_input("物件名・キーワードを入力してください。")
+st.title("Search property")
+
+# --- Authentication ---
+password = st.text_input("パスワード", type="password")
+ 
+if password == st.secrets["password"]:
+    st.success("アクセスが許可されました。")
+else:
+    st.error("アクセスが拒否されました。")
+# --- End Authentication ---
+
+input_1 = st.text_input("物件名・キーワードを入力してください。")
 options = [
     "北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県",
     "茨城県", "栃木県", "群馬県", "埼玉県", "千葉県", "東京都", "神奈川県",
@@ -14,7 +25,7 @@ options = [
     "徳島県", "香川県", "愛媛県", "高知県", "福岡県", "佐賀県", "長崎県",
     "熊本県", "大分県", "宮崎県", "鹿児島県", "沖縄県"
 ]
-input_2 = streamlit.selectbox("都道府県名を選択してください。", options)
+input_2 = st.selectbox("都道府県名を選択してください。", options)
 
 def invoke_lambda(api_gateway_url, payload, site_name):
     headers = {'Content-Type': 'application/json'}
@@ -26,22 +37,22 @@ def invoke_lambda(api_gateway_url, payload, site_name):
     name_2 = result["name2"]
     name_3 = result["name3"]
     print(f"Lambda function response: {name_1}, {name_2}, {name_3}")
-    streamlit.write(f"--------- {site_name} ---------  ") 
-    streamlit.write(f"{name_1}") 
-    streamlit.write(f"{name_2}") 
-    streamlit.write(f"{name_3}") 
-    streamlit.write(f"") 
+    st.write(f"--------- {site_name} ---------  ") 
+    st.write(f"{name_1}") 
+    st.write(f"{name_2}") 
+    st.write(f"{name_3}") 
+    st.write(f"") 
 
 
 # Only proceed if user input is provided (for both Streamlit and standard input)
-if streamlit.button("検索"): # 検索ボタンを追加
+if st.button("検索"): # 検索ボタンを追加
     # リクエストペイロード (必要に応じて)
     payload = {
         "key1": input_1,
         "key2": input_2,
     }
     # Lambda関数呼び出し
-    streamlit.write(f"< 検索結果 >") #For Streamlit
+    st.write(f"< 検索結果 >") #For Streamlit
     result = invoke_lambda(
         api_gateway_url = "https://11l79ngo06.execute-api.ap-northeast-1.amazonaws.com/dev/docker-selenium-tokyu", 
         payload=payload,
