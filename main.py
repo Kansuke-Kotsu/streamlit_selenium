@@ -1,44 +1,32 @@
 import requests
 import json
+import pandas as pd
 import streamlit as st
 import streamlit_authenticator as sa
 
 # Using Streamlit for a better user interface 
 st.title("Search property")
 
+
 # --- Authentication ---
 password = st.text_input("パスワード", type="password")
  
 
-def invoke_lambda(api_gateway_url, payload, site_name):
+def invoke_lambda(api_gateway_url, payload, site_name, df):
     headers = {'Content-Type': 'application/json'}
     response = requests.post(url=api_gateway_url, json=payload, headers=headers)
-    print(f"Raw response: {response.text}")
     response.raise_for_status()  # Raise HTTPError for bad responses (4xx or 5xx)
     result = response.json()
-    name_1 = result["name_1"]
-    name_2 = result["name_2"]
-    name_3 = result["name_3"]
-    address_1 = result["address_1"]
-    address_2 = result["address_2"]
-    address_3 = result["address_3"]
-    rent_1 = result["rent_1"]
-    rent_2 = result["rent_2"]
-    rent_3 = result["rent_3"]
-    print(f"Lambda function response: {name_1}, {name_2}, {name_3}")
-    st.write(f"--------- {site_name} ---------  ") 
-    st.write(f"物件名：{name_1}")
-    st.write(f"住所：{address_1}")
-    st.write(f"家賃:{rent_1}")
-    st.write("")
-    st.write(f"物件名：{name_2}")
-    st.write(f"住所：{address_2}")
-    st.write(f"家賃:{rent_2}")
-    st.write("")
-    st.write(f"物件名：{name_3}")
-    st.write(f"住所：{address_3}")
-    st.write(f"家賃:{rent_3}")
-    st.write(f"") 
+    for i in range(3):
+        # AWSから情報を取得
+        name = result[f"name_{i+1}"]
+        address = result[f"address_{i+1}"]
+        rent = result[f"rent_{i+1}"]
+        # table表示
+        new_row = {"　サイト名　": site_name, "　　　物件名　　　": name, "　　　　　　　　　住所　　　　　　　　　": address, "　家賃　": rent}
+        df = pd.concat([df, pd.DataFrame([new_row])], ignore_index=True)
+        table_placeholder.dataframe(df)
+    return df
 
  
 if password == st.secrets["password"]:
@@ -62,23 +50,36 @@ if password == st.secrets["password"]:
         }
         # Lambda関数呼び出し
         st.write(f"< 検索結果 >") #For Streamlit
-        result = invoke_lambda(
+        # ヘッダー行
+        header = ["　サイト名　", "　　　物件名　　　", "　　　　　　　　　住所　　　　　　　　　", "　家賃　"]
+        # Pandas DataFrame を作成
+        df = pd.DataFrame(columns=header)
+        # テーブルを表示する場所を確保
+        table_placeholder = st.empty()
+        table_placeholder.dataframe(df)
+
+        df = invoke_lambda(
             api_gateway_url = "https://11l79ngo06.execute-api.ap-northeast-1.amazonaws.com/dev/docker-selenium-tokyu", 
             payload=payload,
-            site_name="東急(家賃情報は今後のアプデで実装)"
+            site_name="東急",
+            df=df
             )
         
-        result = invoke_lambda(
+        df = invoke_lambda(
             api_gateway_url = "https://11l79ngo06.execute-api.ap-northeast-1.amazonaws.com/dev/docker-selenium-able", 
             payload=payload,
-            site_name="エイブル"
+            site_name="エイブル",
+            df=df
             )
         
-        result = invoke_lambda(
+        df = invoke_lambda(
             api_gateway_url = "https://11l79ngo06.execute-api.ap-northeast-1.amazonaws.com/dev/docker-selenium-takuto", 
             payload=payload,
-            site_name="宅都"
+            site_name="宅都",
+            df=df
             )
+
+
 
 else:
     st.error("合言葉は？")
