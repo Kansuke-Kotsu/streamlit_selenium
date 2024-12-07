@@ -22,16 +22,22 @@ def invoke_lambda(api_gateway_url, payload, site_name):
     address_1 = result["address_1"]
     address_2 = result["address_2"]
     address_3 = result["address_3"]
+    rent_1 = result["rent_1"]
+    rent_2 = result["rent_2"]
+    rent_3 = result["rent_3"]
     print(f"Lambda function response: {name_1}, {name_2}, {name_3}")
     st.write(f"--------- {site_name} ---------  ") 
     st.write(f"物件名：{name_1}")
     st.write(f"住所：{address_1}")
+    st.write(f"家賃(+共益費):{rent_1}")
     st.write("")
     st.write(f"物件名：{name_2}")
     st.write(f"住所：{address_2}")
+    st.write(f"家賃(+共益費):{rent_2}")
     st.write("")
     st.write(f"物件名：{name_3}")
     st.write(f"住所：{address_3}")
+    st.write(f"家賃(+共益費):{rent_3}")
     st.write(f"") 
 
  
