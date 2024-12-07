@@ -16,12 +16,12 @@ def invoke_lambda(api_gateway_url, payload, site_name):
     print(f"Raw response: {response.text}")
     response.raise_for_status()  # Raise HTTPError for bad responses (4xx or 5xx)
     result = response.json()
-    name_1 = result["name1"]
-    name_2 = result["name2"]
-    name_3 = result["name3"]
-    address_1 = result["address1"]
-    address_2 = result["address2"]
-    address_3 = result["address3"]
+    name_1 = result["name_1"]
+    name_2 = result["name_2"]
+    name_3 = result["name_3"]
+    address_1 = result["address_1"]
+    address_2 = result["address_2"]
+    address_3 = result["address_3"]
     print(f"Lambda function response: {name_1}, {name_2}, {name_3}")
     st.write(f"--------- {site_name} ---------  ") 
     st.write(f"物件名：{name_1}")
