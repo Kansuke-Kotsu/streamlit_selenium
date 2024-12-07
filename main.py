@@ -59,7 +59,7 @@ if password == st.secrets["password"]:
         result = invoke_lambda(
             api_gateway_url = "https://11l79ngo06.execute-api.ap-northeast-1.amazonaws.com/dev/docker-selenium-tokyu", 
             payload=payload,
-            site_name="東急"
+            site_name="東急(家賃情報は今後のアプデで実装)"
             )
         
         result = invoke_lambda(
@@ -75,6 +75,6 @@ if password == st.secrets["password"]:
             )
 
 else:
-    st.error("パスワードを入力してください。")
+    st.error("合言葉は？")
 # --- End Authentication ---
 
