@@ -19,11 +19,19 @@ def invoke_lambda(api_gateway_url, payload, site_name):
     name_1 = result["name1"]
     name_2 = result["name2"]
     name_3 = result["name3"]
+    address_1 = result["address1"]
+    address_2 = result["address2"]
+    address_3 = result["address3"]
     print(f"Lambda function response: {name_1}, {name_2}, {name_3}")
     st.write(f"--------- {site_name} ---------  ") 
-    st.write(f"{name_1}") 
-    st.write(f"{name_2}") 
-    st.write(f"{name_3}") 
+    st.write(f"物件名：{name_1}")
+    st.write(f"住所：{address_1}")
+    st.write("")
+    st.write(f"物件名：{name_2}")
+    st.write(f"住所：{address_2}")
+    st.write("")
+    st.write(f"物件名：{name_3}")
+    st.write(f"住所：{address_3}")
     st.write(f"") 
 
  
