@@ -1,26 +1,40 @@
-import streamlit as st
-import pandas as pd
-import numpy as np
 import requests
+import json
+import pandas as pd
+import streamlit as st
+import streamlit_authenticator as sa
+
+# Using Streamlit for a better user interface 
+st.title("Search property")
+
+
+# --- Authentication ---
+#password = st.text_input("パスワード", type="password")
+ 
 
 def invoke_lambda(api_gateway_url, payload, site_name, df):
-    headers = {'Content-Type': 'application/json'}
-    response = requests.post(url=api_gateway_url, json=payload, headers=headers)
-    response.raise_for_status()  # Raise HTTPError for bad responses (4xx or 5xx)
-    result = response.json()
-    for i in range(3):
-        # AWSから情報を取得
-        name = result[f"name_{i+1}"]
-        address = result[f"address_{i+1}"]
-        rent = result[f"rent_{i+1}"]
-        # table表示
-        new_row = {"　サイト名　": site_name, "　　　物件名　　　": name, "　　　　　　　　　住所　　　　　　　　　": address, "　家賃　": rent}
-        df = pd.concat([df, pd.DataFrame([new_row])], ignore_index=True)
-        table_placeholder.dataframe(df)
+    try :
+        headers = {'Content-Type': 'application/json'}
+        response = requests.post(url=api_gateway_url, json=payload, headers=headers)
+        response.raise_for_status()  # Raise HTTPError for bad responses (4xx or 5xx)
+        result = response.json()
+        for i in range(3):
+            # AWSから情報を取得
+            name = result[f"name_{i+1}"]
+            address = result[f"address_{i+1}"]
+            rent = result[f"rent_{i+1}"]
+            # table表示
+            new_row = {"　サイト名　": site_name, "　　　物件名　　　": name, "　　　　　　　　　住所　　　　　　　　　": address, "　家賃　": rent}
+            df = pd.concat([df, pd.DataFrame([new_row])], ignore_index=True)
+            table_placeholder.dataframe(df)
+        
+    except Exception as e:
+        st.write(e)
+    
     return df
 
-
-    
+ 
+#if password == st.secrets["password"]:
 input_1 = st.text_input("物件名・キーワードを入力してください。")
 options = [
 "北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県",
@@ -69,4 +83,10 @@ if st.button("検索"): # 検索ボタンを追加
         site_name="宅都",
         df=df
         )
+
+
+
+#else:
+#    st.error("合言葉は？")
+# --- End Authentication ---
 
