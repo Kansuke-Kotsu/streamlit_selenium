@@ -6,12 +6,15 @@ import streamlit as st
 # タイトルと説明文の表示
 st.set_page_config(page_title="物件検索", layout="wide")
 st.title("物件検索アプリ")
-st.markdown("### キーワードと地域を指定して物件情報を検索します。")
+
+# --- Authentication ---
+#password = st.text_input("パスワード", type="password")
+
 
 # --- 入力フォームの設置 ---
 with st.sidebar:
     st.header("検索条件")
-    input_1 = st.text_input("物件名・キーワード", placeholder="例：ペット可、駅近など")
+    input_1 = st.text_input("物件名", placeholder="")
     options = [
         "北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県",
         "茨城県", "栃木県", "群馬県", "埼玉県", "千葉県", "東京都", "神奈川県",
@@ -42,8 +45,9 @@ def invoke_lambda(api_gateway_url, payload, site_name, df):
         response = requests.post(url=api_gateway_url, json=payload, headers=headers)
         response.raise_for_status()  # HTTP エラーの場合は例外を発生させる
         result = response.json()
+        print(result)
         # 例として、結果に3件の物件情報が含まれている前提
-        for i in range(3):
+        for i in range(len(result)):
             # AWSから情報を取得
             name = result.get(f"name_{i+1}", "情報なし")
             address = result.get(f"address_{i+1}", "情報なし")
