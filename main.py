@@ -46,7 +46,8 @@ if password == st.secrets["password"]:
             response.raise_for_status()  # HTTP エラーの場合は例外を発生させる
             result = response.json()
             # 例として、結果に3件の物件情報が含まれている前提
-            for i in range(len(result)):
+            num_iterations = max(1, (len(result) - 2) // 3)
+            for i in range(num_iterations):
                 # AWSから情報を取得
                 name = result.get(f"name_{i+1}", "情報なし")
                 address = result.get(f"address_{i+1}", "情報なし")
