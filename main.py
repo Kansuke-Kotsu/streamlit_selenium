@@ -33,8 +33,7 @@ if password == st.secrets["password"]:
     # ヘッダー行の設定
     header = ["サイト名", "物件名", "住所", "家賃"]
     df = pd.DataFrame(columns=header)
-    # テーブル表示用プレースホルダー（検索途中は DataFrame 表示で更新）
-    table_placeholder = st.empty()
+    table_placeholder = st.empty()  # 後から更新可能な表示領域として定義
     table_placeholder.dataframe(df, use_container_width=True)
 
     def invoke_lambda(api_gateway_url, payload, site_name, df):
@@ -46,8 +45,9 @@ if password == st.secrets["password"]:
             response = requests.post(url=api_gateway_url, json=payload, headers=headers)
             response.raise_for_status()  # HTTP エラーの場合は例外を発生させる
             result = response.json()
-            # 例：レスポンスの件数分ループ
+            # 例として、結果に3件の物件情報が含まれている前提
             for i in range(len(result)):
+                # AWSから情報を取得
                 name = result.get(f"name_{i+1}", "情報なし")
                 address = result.get(f"address_{i+1}", "情報なし")
                 rent = result.get(f"rent_{i+1}", "情報なし")
@@ -83,26 +83,13 @@ if password == st.secrets["password"]:
             for idx, config in enumerate(lambda_configs):
                 with st.spinner(f"{config['site']} の検索中..."):
                     df = invoke_lambda(
-                        api_gateway_url=config["url"], 
-                        payload=payload,
-                        site_name=config["site"],
-                        df=df
+                        api_gateway_url = config["url"], 
+                        payload = payload,
+                        site_name = config["site"],
+                        df = df
                     )
                 progress_bar.progress((idx + 1) / num_sites)
             
             st.success("全ての検索が完了しました！")
-            
-            # 結果が存在する場合、個別にカード形式で表示
-            if df.empty:
-                st.info("検索結果がありませんでした。")
-            else:
-                st.markdown("### 詳細結果")
-                for idx, row in df.iterrows():
-                    with st.container():
-                        st.markdown(f"**サイト名：** {row['サイト名']}")
-                        st.markdown(f"**物件名：** {row['物件名']}")
-                        st.markdown(f"**住所：** {row['住所']}")
-                        st.markdown(f"**家賃：** {row['家賃']}")
-                        st.markdown("---")
 else:
     st.write("合言葉は？")
