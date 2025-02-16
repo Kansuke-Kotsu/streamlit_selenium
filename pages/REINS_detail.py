@@ -56,7 +56,7 @@ if password == st.secrets["password"]:
                     "敷金": result.get(f"Shikikin_{i}", "情報なし"),
                     "礼金": result.get(f"Reikin_{i}", "情報なし"),
                     "管理費": result.get(f"Kanrihi_{i}", "情報なし"),
-                    "手数料": result.get(f"Fee_{i}", "情報なし"),
+                    "報酬(Ad料)": result.get(f"Fee_{i}", "情報なし"),
                 }
                 df = pd.concat([df, pd.DataFrame([new_row])], ignore_index=True)
                 table_placeholder.dataframe(df, use_container_width=True)
